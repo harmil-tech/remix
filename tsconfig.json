@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "moduleResolution": "node",
+    "module": "ES2022",
     "resolveJsonModule": true,
     "target": "ES2022",
     "strict": true,
@@ -19,4 +20,3 @@
     "noEmit": true
   }
 }
-
