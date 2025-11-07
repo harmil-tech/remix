@@ -15,3 +15,11 @@ export type WeatherResponse = {
 export type ActionData =
   | { error: string; fieldErrors?: { city?: string } }
   | { data: WeatherResponse };
+
+export type OpenWeatherResponse = {
+  name?: string;
+  sys?: { country?: string };
+  dt: number;
+  main?: { temp?: number; humidity?: number };
+  weather?: Array<{ id?: number }>;
+};

@@ -4,7 +4,7 @@ This project adds a single route (`/weather`) that lets a user enter a city name
 
 ## Prerequisites
 - Node.js 18+
-- tomorrow io API
+- Open weather API
 
 ## Setup
 1. Install dependencies:
@@ -13,16 +13,16 @@ This project adds a single route (`/weather`) that lets a user enter a city name
 npm install
 ```
 
-2. Set your tomorrow API key in the environment before starting the server. For example:
+2. Set your Open weather API key in the environment before starting the server. For example:
 
 ```bash
-export TOMORROW_API=your_api_key_here
+export OPENWEATHER_API_KEY=your_api_key_here
 ```
 
 On Windows (PowerShell):
 
 ```powershell
-$Env:TOMORROW_API="your_api_key_here"
+$Env:OPENWEATHER_API_KEY="your_api_key_here"
 ```
 
 3. Start the dev server:
