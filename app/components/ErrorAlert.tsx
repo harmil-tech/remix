@@ -1,5 +1,3 @@
-import React from "react";
-
 type Props = { message: string };
 
 export default function ErrorAlert({ message }: Props) {
@@ -7,11 +5,11 @@ export default function ErrorAlert({ message }: Props) {
     <div
       role="alert"
       style={{
-        marginTop: "1rem",
-        padding: "1rem",
-        background: "#fee",
-        color: "#c33",
-        border: "1px solid #fcc",
+        marginTop: '1rem',
+        padding: '1rem',
+        background: '#fee',
+        color: '#c33',
+        border: '1px solid #fcc',
         borderRadius: 6,
       }}
     >

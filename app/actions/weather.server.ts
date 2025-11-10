@@ -1,13 +1,16 @@
-import type { ActionFunction } from "@remix-run/node";
-import type { WeatherResponse, OpenWeatherResponse } from "~/types/weather";
+import type { ActionFunction } from '@remix-run/node';
+import type { OpenWeatherResponse, WeatherResponse } from '~/types/weather';
 
 // Handling the weather data after submitting the form
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const rawCity = formData.get("city");
+  const rawCity = formData.get('city');
 
-  if (typeof rawCity !== "string" || rawCity.trim().length === 0) {
-    return { error: "Please enter a city name.", fieldErrors: { city: "City is required" } } as const;
+  if (typeof rawCity !== 'string' || rawCity.trim().length === 0) {
+    return {
+      error: 'Please enter a city name.',
+      fieldErrors: { city: 'City is required' },
+    } as const;
   }
 
   const city = rawCity.trim();
@@ -20,19 +23,20 @@ export const action: ActionFunction = async ({ request }) => {
     )}&appid=${apiKey}&units=metric`;
 
     const res = await fetch(url);
-
     if (!res.ok) {
       if (res.status === 404) {
         return { error: `City "${city}" not found. Try another.` } as const;
       }
-      return { error: `Weather service error (${res.status}). Please try again.` } as const;
+      return {
+        error: `Weather service error (${res.status}). Please try again.`,
+      } as const;
     }
 
     const json = (await res.json()) as OpenWeatherResponse;
 
     // Normalize response to fit your existing structure
     const data: WeatherResponse = {
-      location: { name: `${json.name}, ${json.sys?.country ?? ""}` },
+      location: { name: `${json.name}, ${json.sys?.country ?? ''}` },
       timelines: {
         hourly: [
           {
@@ -49,8 +53,8 @@ export const action: ActionFunction = async ({ request }) => {
     return { data } as const;
   } catch (err) {
     return {
-      error: "Unable to fetch weather right now. Check your connection and try again.",
+      error:
+        'Unable to fetch weather right now. Check your connection and try again.',
     } as const;
   }
 };
-
