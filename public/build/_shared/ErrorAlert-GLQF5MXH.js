@@ -1,1 +1,0 @@
-import{b as e}from"/build/_shared/chunk-4HXKWYDW.js";import{c as r}from"/build/_shared/chunk-Q3IECNXJ.js";var o=r(e());function i({message:d}){return(0,o.jsx)("div",{role:"alert",style:{marginTop:"1rem",padding:"1rem",background:"#fee",color:"#c33",border:"1px solid #fcc",borderRadius:6},children:d})}export{i as default};
