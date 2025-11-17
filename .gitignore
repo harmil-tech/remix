@@ -19,3 +19,10 @@ node_modules/
 # typescript
 *.tsbuildinfo
 
+# test results
+coverage/
+
+public/build
+build/
+.cache/
+.vite/
