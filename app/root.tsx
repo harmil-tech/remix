@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
   useCatch,
 } from '@remix-run/react';
+import styles from './styles.css';
 
 const remixSvg = `<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><rect width="32" height="32" rx="7" fill="#38bdf8"/><path d="M9 16c0-3.87 3.13-7 7-7h6a1 1 0 010 2h-6a5 5 0 00-5 5v2a5 5 0 005 5h2.5a1 1 0 010 2H17c-3.87 0-7-3.13-7-7z" fill="#fff"/><circle cx="22.5" cy="22.5" r="1.5" fill="#fff"/></svg>`;
 
@@ -19,6 +20,7 @@ export const meta: MetaFunction = () => ({
 });
 
 export const links: LinksFunction = () => [
+  { rel: 'stylesheet', href: styles },
   {
     rel: 'icon',
     type: 'image/svg+xml',

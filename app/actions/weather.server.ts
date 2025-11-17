@@ -42,9 +42,11 @@ export const action: ActionFunction = async ({ request }) => {
           {
             time: new Date(json.dt * 1000).toISOString(),
             values: {
-              temperature: json.main?.temp,
-              humidity: json.main?.humidity,
-              weatherCode: json.weather?.[0]?.id,
+              temperature: json.main?.temp ?? 0,
+              humidity: json.main?.humidity ?? 0,
+              weatherCode: json.weather?.[0]?.id ?? 0,
+              windSpeed: json.wind?.speed ?? 0, // <-- ADD THIS
+              visibility: json.visibility ? json.visibility / 1000 : 0, // meters → km
             },
           },
         ],

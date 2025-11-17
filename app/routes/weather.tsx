@@ -1,164 +1,139 @@
-import { Form, useActionData, useNavigation } from '@remix-run/react';
-import { Suspense, lazy, useEffect, useRef, useState } from 'react';
+  import { Form, useActionData, useNavigation } from '@remix-run/react';
+  import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
-const WeatherResult = lazy(() => import('../components/WeatherResult'));
-const ErrorAlert = lazy(() => import('../components/ErrorAlert'));
+  const WeatherResult = lazy(() => import('../components/WeatherResult'));
+  const ErrorAlert = lazy(() => import('../components/ErrorAlert'));
 
-import type { ActionData } from '~/types/weather';
-export { action } from '~/actions/weather.server';
+  import type { ActionData } from '~/types/weather';
+  export { action } from '~/actions/weather.server';
 
-export default function Weather() {
-  const actionData = useActionData<ActionData>();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
+  export default function Weather() {
+    const actionData = useActionData<ActionData>();
+    const navigation = useNavigation();
+    const isSubmitting = navigation.state === 'submitting';
 
-  const formRef = useRef<HTMLFormElement | null>(null);
+    const formRef = useRef<HTMLFormElement | null>(null);
 
-  // local state for FE validation
-  const [cityError, setCityError] = useState<string | null>(null);
+    // local state for FE validation
+    const [cityError, setCityError] = useState<string | null>(null);
 
-  const cityFieldError =
-    actionData && 'fieldErrors' in actionData
-      ? actionData.fieldErrors?.city
-      : undefined;
+    const cityFieldError =
+      actionData && 'fieldErrors' in actionData
+        ? actionData.fieldErrors?.city
+        : undefined;
 
-  const hasError =
-    actionData && 'error' in actionData ? actionData.error : undefined;
-  const data = actionData && 'data' in actionData ? actionData.data : undefined;
+    const hasError =
+      actionData && 'error' in actionData ? actionData.error : undefined;
+    const data = actionData && 'data' in actionData ? actionData.data : undefined;
 
-  const latest = data?.timelines?.hourly?.[0];
-  const temp = latest?.values?.temperature;
-  const humidity = latest?.values?.humidity;
+    const latest = data?.timelines?.hourly?.[0];
+    const temp = latest?.values?.temperature;
+    const humidity = latest?.values?.humidity;
+    const windSpeed = latest?.values?.windSpeed;
+    const visibility = latest?.values?.visibility;
 
-  // Clear the input filed after submitting it
-  useEffect(() => {
-    if (actionData && 'data' in actionData) {
-      formRef.current?.reset();
-      setCityError(null); // clear FE error after success
+    // Clear the input filed after submitting it
+    useEffect(() => {
+      if (actionData && 'data' in actionData) {
+        formRef.current?.reset();
+        setCityError(null); // clear FE error after success
+      }
+    }, [actionData]);
+
+    useEffect(() => {
+      if (hasError) {
+        formRef.current?.reset();
+        const input = formRef.current?.querySelector('input[name="city"]') as HTMLInputElement | null;
+        input?.focus();
+      }
+    }, [hasError]);
+
+    // Client-side validation before submission
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+      const form = event.currentTarget;
+      const city = form.city.value.trim();
+
+      if (!city) {
+        event.preventDefault(); // Stop submission
+        setCityError('City name is required!');
+      } else if (city.length < 3) {
+        event.preventDefault();
+        setCityError('City name must be at least 3 characters long!');
+      } else {
+        setCityError(null);
+      }
     }
-  }, [actionData]);
 
-  // Client-side validation before submission
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    const form = event.currentTarget;
-    const city = form.city.value.trim();
+    return (
+      <div className="container">
+        <header className="hero">
+          <h1 className="hero-title">Weather Forecast</h1>
+          <p className="hero-subtitle">Get real-time weather information for any city</p>
+        </header>
 
-    if (!city) {
-      event.preventDefault(); // Stop submission
-      setCityError('City name is required!');
-    } else if (city.length < 3) {
-      event.preventDefault();
-      setCityError('City name must be at least 3 characters long!');
-    } else {
-      setCityError(null);
-    }
-  }
+        <section className="search-card">
+          <label htmlFor="city" className="search-label">Search by City</label>
+          <Form
+            ref={formRef}
+            method="post"
+            onSubmit={handleSubmit} // <-- add this
+            noValidate
+            className="search-row"
+          >
+            <input
+              id="city"
+              name="city"
+              type="text"
+              placeholder="e.g. London"
+              aria-invalid={!!(cityFieldError || cityError)}
+              aria-describedby={cityFieldError ? 'city-error' : undefined}
+              disabled={isSubmitting}
+              className={`input ${cityFieldError || cityError ? 'error' : ''}`}
+            />
 
-  return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', lineHeight: '1.8' }}>
-      <h1>Weather Data</h1>
-      <p>Enter a city name to see the current forecast.</p>
-
-      <Form
-        ref={formRef}
-        method="post"
-        onSubmit={handleSubmit} // <-- add this
-        noValidate
-        style={{
-          marginTop: '1rem',
-          display: 'flex',
-          gap: '0.5rem',
-          alignItems: cityError || cityFieldError ? 'center' : 'flex-end',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            maxWidth: 480,
-          }}
-        >
-          <label htmlFor="city" style={{ marginBottom: 4, fontWeight: 500 }}>
-            City
-          </label>
-          <input
-            id="city"
-            name="city"
-            type="text"
-            placeholder="e.g. London"
-            aria-invalid={!!(cityFieldError || cityError)}
-            aria-describedby={cityFieldError ? 'city-error' : undefined}
-            disabled={isSubmitting}
-            style={{
-              padding: '0.6rem 0.8rem',
-              borderRadius: 6,
-              border:
-                cityFieldError || cityError ? '2px solid #dc3545' : '1px solid #ccc',
-              fontSize: '1rem',
-              cursor: isSubmitting ? 'not-allowed' : 'pointer',
-            }}
-          />
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="button"
+            >
+              {isSubmitting ? 'Fetching...' : 'Get Weather'}
+            </button>
+          </Form>
 
           {/* Show frontend validation error */}
           {cityError && (
-            <div
-              id="city-error"
-              role="alert"
-              style={{ color: '#dc3545', marginTop: 6, fontSize: 14 }}
-            >
+            <div id="city-error" role="alert" className="error-text">
               {cityError}
             </div>
           )}
 
           {/* Show server-side validation error */}
           {cityFieldError && (
-            <div
-              id="city-error"
-              role="alert"
-              style={{ color: '#dc3545', marginTop: 6, fontSize: 14 }}
-            >
+            <div id="city-error" role="alert" className="error-text">
               {cityFieldError}
             </div>
           )}
-        </div>
+        </section>
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          style={{
-            padding: '0.65rem 1rem',
-            backgroundColor: isSubmitting ? '#6c757d' : '#007bff',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 6,
-            cursor: isSubmitting ? 'not-allowed' : 'pointer',
-            fontWeight: 600,
-          }}
-        >
-          {isSubmitting ? 'Fetching...' : 'Get Weather'}
-        </button>
-      </Form>
+        {/* Error message from backend */}
+        {hasError && (
+          <Suspense fallback={<div className="mt-4">Loading error…</div>}>
+            <ErrorAlert message={hasError} />
+          </Suspense>
+        )}
 
-      {/* Error message from backend */}
-      {hasError && (
-        <Suspense fallback={<div style={{ marginTop: '1rem' }}>Loading error…</div>}>
-          <ErrorAlert message={hasError} />
-        </Suspense>
-      )}
-
-      {/* Weather result */}
-      {data && latest && (
-        <Suspense
-          fallback={<div style={{ marginTop: '1rem' }}>Loading details…</div>}
-        >
-          <WeatherResult
-            locationName={data.location?.name}
-            temp={temp}
-            humidity={humidity}
-          />
-        </Suspense>
-      )}
-    </div>
-  );
-}
+        {/* Weather result */}
+        {data && latest && (
+          <Suspense fallback={<div className="mt-4">Loading details…</div>}>
+            <WeatherResult
+              locationName={data.location?.name}
+              temp={temp}
+              humidity={humidity}
+              windSpeed={windSpeed}
+              visibility={visibility}
+            />
+          </Suspense>
+        )}
+      </div>
+    );
+  }

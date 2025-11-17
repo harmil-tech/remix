@@ -4,9 +4,11 @@ export type WeatherResponse = {
     hourly?: Array<{
       time: string;
       values: {
-        temperature?: number;
-        humidity?: number;
-        weatherCode?: number;
+          temperature: number;
+          humidity: number;
+          windSpeed: number;
+          visibility: number;
+          weatherCode: number;
       };
     }>;
   };
@@ -22,4 +24,6 @@ export type OpenWeatherResponse = {
   dt: number;
   main?: { temp?: number; humidity?: number };
   weather?: Array<{ id?: number }>;
+  wind?: { speed?: number };
+  visibility?: number;
 };
