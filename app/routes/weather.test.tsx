@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { useActionData, useNavigation } from '@remix-run/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 jest.mock('@remix-run/react', () => {
   const actual = jest.requireActual('@remix-run/react');
@@ -9,7 +10,6 @@ jest.mock('@remix-run/react', () => {
     Form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
   };
 });
-import { useActionData, useNavigation } from '@remix-run/react';
 
 // Mock the server action module to avoid importing server runtime
 jest.mock('~/actions/weather.server', () => ({ action: jest.fn() }));
@@ -66,9 +66,7 @@ describe('Weather route component', () => {
     fireEvent.click(submit);
 
     const alert = await screen.findByRole('alert');
-    expect(alert).toHaveTextContent(
-      'City name must be at least 3 characters long!'
-    );
+    expect(alert).toHaveTextContent('City name must be at least 3 characters long!');
   });
 
   it('shows server-side field error from actionData', () => {

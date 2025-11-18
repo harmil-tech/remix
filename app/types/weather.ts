@@ -4,11 +4,11 @@ export type WeatherResponse = {
     hourly?: Array<{
       time: string;
       values: {
-          temperature: number;
-          humidity: number;
-          windSpeed: number;
-          visibility: number;
-          weatherCode: number;
+        temperature: number;
+        humidity: number;
+        windSpeed: number;
+        visibility: number;
+        weatherCode: number;
       };
     }>;
   };
